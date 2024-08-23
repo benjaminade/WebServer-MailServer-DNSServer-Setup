@@ -1,11 +1,6 @@
-# Linux Mail Server Setup with Postfix, Dovecot and Bind9
+# Linux web server, Mail Server Setup with Postfix, Dovecot and dns server with Bind9
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
-![Made with Bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)
-
-This repository contains a guide and configuration files for setting up a robust, self-hosted mail server on Linux systems using Postfix as the Mail Transfer Agent (MTA) and Dovecot as the IMAP/POP3 server.
+This repository contains a guide and configuration files for setting up a web server using apache2, a robust self-hosted mail server on Linux systems using Postfix as the Mail Transfer Agent (MTA) and Dovecot as the IMAP/POP3 server, and dns server using bind9
 
 ## Prerequisites
 
@@ -25,12 +20,20 @@ sudo apt update && sudo apt upgrade -y
 ### 2. Install required packages
 
 ```bash
-sudo apt install -y postfix dovecot-core dovecot-imapd dovecot-pop3d bind9 bind9utils bind9-doc
+sudo apt install -y apache2 postfix dovecot-core dovecot-imapd dovecot-pop3d bind9 bind9utils bind9-doc
 ```
 
 When prompted during Postfix installation, select "Internet Site" and enter your domain name.
 
-### 3. Configure Postfix
+### 3. Verify Apache Installation
+Apache should be running by default. You can verify this with:
+```bash
+sudo systemctl status apache2
+```
+### 4. Test the Web Server
+Open a web browser and navigate to your EC2 instance's public IP address (http://your-ec2-public-ip). You should see the default Apache2 Ubuntu welcome page, which indicates that the web server is up and running.
+
+### 5. Configure Postfix
 
 Edit the main Postfix configuration file:
 ```bash
@@ -39,7 +42,7 @@ sudo nano /etc/postfix/main.cf
 
 Replace the content with the configuration provided in **configs/main.cf**. Make sure to replace your_domain.ddns.net with your actual domain.
 
-### 4. Configure Dovecot
+### 6. Configure Dovecot
 
 Edit the Dovecot configuration file:
 ```bash
@@ -48,7 +51,7 @@ sudo nano /etc/dovecot/dovecot.conf
 
 Replace the content with the configuration provided in **configs/dovecot.conf**.
 
-### 5. Configure BIND9 (if using)
+### 7. Configure BIND9 (if using)
 
 Edit the BIND9 local configuration file:
 ```bash
@@ -64,7 +67,7 @@ sudo nano /etc/bind/db.your_domain.ddns.net
 
 Add the content from **configs/db.your_domain.ddns.net**, replacing your_domain.ddns.net and your_server_ip_address with your actual domain and server IP.
 
-### 6. Set Up No-IP Dynamic DNS Client
+### 8. Set Up No-IP Dynamic DNS Client
 
 Install build tools:
 ```bash
@@ -88,7 +91,7 @@ sudo /usr/local/bin/noip2 -C
 
 Follow the prompts to enter your No-IP account details and configure the client.
 
-### 7. Configure Gmail as a Relay (optional)
+### 9. Configure Gmail as a Relay (optional)
 If you want to use Gmail as a relay for outgoing emails:
 
 Create a file for Gmail credentials:
@@ -104,14 +107,14 @@ sudo chmod 600 /etc/postfix/sasl_passwd
 sudo postmap /etc/postfix/sasl_passwd
 ```
 
-### 8. Restart Services
+### 10. Restart Services
 
 ```bash
 sudo systemctl restart postfix dovecot bind9
 sudo /usr/local/bin/noip2
 ```
 
-### 9. Test the Setup
+### 11. Test the Mail Setup
 
 Install mailutils:
 ```bash
