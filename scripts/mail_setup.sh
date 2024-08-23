@@ -88,7 +88,7 @@ make install
 # Install mailutils
 apt install -y mailutils
 
-# Send a test email
+# Sending a test email
 echo "This is a test email from your new mail server." | mail -s "Test Email" $EMAIL
 
 echo "Setup complete. Please check your email at $EMAIL for a test message."
